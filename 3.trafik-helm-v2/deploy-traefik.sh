@@ -1,0 +1,1 @@
+ helm install -f traefik-values.yaml traefik-v2 traefik/traefik

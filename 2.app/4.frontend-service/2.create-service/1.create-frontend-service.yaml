@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: $SERVICE_NAME
+  namespace: $NAMESPACE_NAME
+spec:
+  ports:
+    - name: web
+      port: 80
+      targetPort: $CONTAINER_PORT
+  selector:
+    app: $FRONTEND_DEPLOYMENT_NAME

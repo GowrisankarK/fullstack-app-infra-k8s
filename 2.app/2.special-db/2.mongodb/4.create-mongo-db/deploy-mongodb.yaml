@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: $MONGODB_NAME
+  name: $MONGODB_NAME
+  namespace: $NAMESPACE_NAME
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $MONGODB_NAME
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: $MONGODB_NAME
+    spec:
+      containers:
+      - image: mongo
+        name: $MONGODB_NAME
+        args: ["--dbpath","/data/db"]
+        livenessProbe:
+          exec:
+            command:
+              - bash
+              - "-c"
+              - |
+              - mongo
+              - --disableImplicitSessions
+              - --eval
+              - "db.adminCommand('ping')"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 6
+        readinessProbe:
+          exec:
+            command:
+              - bash
+              - "-c"
+              - |
+              - mongo
+              - --disableImplicitSessions
+              - --eval
+              - "db.adminCommand('ping')"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 6
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: $SECRETS_NAME
+              key: username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: $SECRETS_NAME
+              key: password
+        volumeMounts:
+        - name: "mongo-data-dir"
+          mountPath: "/data/db"
+      volumes:
+      - name: "mongo-data-dir"
+        persistentVolumeClaim:
+          claimName: $PV_CLAIM_NAME
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: $MONGODB_NAME
+  name: $MONGODB_SERVICE_NAME
+  namespace: $NAMESPACE_NAME
+spec:
+  ports:
+  - port: 27017
+    protocol: TCP
+    targetPort: 27017
+    nodePort: 32001
+  selector:
+    app: $MONGODB_NAME
+  type: NodePort
+status:
+  loadBalancer: {}

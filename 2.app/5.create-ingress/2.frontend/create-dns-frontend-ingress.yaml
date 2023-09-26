@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: $INGRESS_NAME
+  namespace: $NAMESPACE_NAME
+  annotations:
+   cert-manager.io/cluster-issuer: "letsencrypt-stage"
+spec:
+  rules:
+    - host: stage.your_domain.io
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: $SERVICE_NAME
+              port:
+                number: 80
+  tls:
+    - hosts:
+        - stage.your_domain.io
+      secretName: your_domain.io-certificate-v2

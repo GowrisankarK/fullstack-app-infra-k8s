@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: your_domain.io.certificate-v2
+  namespace: $NAMESPACE_NAME
+spec:
+  # Certificate will be valid for these domain names
+  dnsNames:
+  # - stage-backend.your_domain.io
+  - stage.your_domain.io
+  # - '*.your_domain.io'
+  # Reference our issuer
+  # As it's a ClusterIssuer, it can be in a different namespace
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-stage
+  # Secret that will be created with our certificate and private keys
+  secretName: your_domain.io-certificate-v2

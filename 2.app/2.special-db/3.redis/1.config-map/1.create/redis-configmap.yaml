@@ -1,0 +1,11 @@
+# Redis is a in-memory NOSQL database, we often use it for cache purpose.
+#Reference: https://redis.io/docs/management/config/
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: $REDIS_CONFIG_NAME
+  namespace: $NAMESPACE_NAME
+data:
+  redis-config: |
+    maxmemory 2mb
+    maxmemory-policy allkeys-lru

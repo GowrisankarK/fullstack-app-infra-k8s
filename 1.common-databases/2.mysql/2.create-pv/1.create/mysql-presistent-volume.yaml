@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: $PV_NAME
+  namespace: $NAMESPACE_NAME
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: $STORAGE_SPACE
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: $PV_CLAIM_NAME
+  namespace: $NAMESPACE_NAME
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: $STORAGE_SPACE

@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: $NAMESPACE_NAME
+  name: $SERVICE_NAME
+spec:
+  replicas: $REPLICA_SET_COUNT
+  selector:
+    matchLabels:
+      app: $SERVICE_NAME
+  template:
+    metadata:
+      labels:
+        app: $SERVICE_NAME
+    spec:
+      containers:
+      - name: $SERVICE_NAME
+        image: $FRONTEND_SERVICE_IMAGE
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: $FRONTEND_CONTAINER_PORT
+        envFrom:
+          - configMapRef:
+              name: $FRONTEND_ENV_CONFIG_MAP_NAME

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $MYSQL_DEPLOYMENT_NAME
+  namespace: $NAMESPACE_NAME
+spec:
+  selector:
+    matchLabels:
+      app: $MYSQL_DEPLOYMENT_NAME
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: $MYSQL_DEPLOYMENT_NAME
+    spec:
+      containers:
+      - image: mysql:latest
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: $SECRETS_NAME
+              key: password
+        - name: MYSQL_DATABASE
+          value: meta_stage
+        - name: MYSQL_INNODB_DEFAULT_ROW_FORMAT
+          value: DYNAMIC
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: $PV_CLAIM_NAME
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: $MYSQL_SERVICE_NAME
+  namespace: $NAMESPACE_NAME
+spec:
+  ports:
+  - port: 3306
+  selector:
+    app: $MYSQL_DEPLOYMENT_NAME

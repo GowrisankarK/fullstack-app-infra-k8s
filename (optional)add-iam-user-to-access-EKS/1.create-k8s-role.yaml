@@ -1,0 +1,9 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: $ROLE_NAME
+  # namespace: $NAMESPACE_NAME
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["create", "delete", "list"]

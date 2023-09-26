@@ -1,0 +1,13 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: $ROLE_BINDING_NAME
+  # namespace: $NAMESPACE_NAME
+subjects:
+- kind: User
+  type: AWSPrincipal
+  identifier: $IAM_ARN
+roleRef:
+  kind: Role
+  name: $ROLE_REF_NAME
+  apiGroup: ""

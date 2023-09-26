@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: $NAMESPACE_NAME
+  name: $SERVICE_NAME
+spec:
+  replicas: $REPLICA_SET_COUNT
+  selector:
+    matchLabels:
+      app: $SERVICE_NAME
+  template:
+    metadata:
+      labels:
+        app: $SERVICE_NAME
+    spec:
+      containers:
+      - name: $SERVICE_NAME
+        image: $BACKEND_SERVICE_IMAGE
+        imagePullPolicy: Always
+        ports:
+          - containerPort: $BACKEND_SERVICE_PORT
+            # hostPort: $BACKEND_SERVICE_PORT
+        livenessProbe:
+          httpGet:
+            path: $LIVENESS_PROBE_PATH
+            port: $BACKEND_SERVICE_PORT
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 15
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: $READINESS_PROBE_PATH
+            port: $BACKEND_SERVICE_PORT
+            scheme: HTTP
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        envFrom:
+        - configMapRef:
+            name: $MYSQL_CONFIGMAP_NAME
